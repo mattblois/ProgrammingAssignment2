@@ -1,31 +1,45 @@
-## The makeCache function creates a list of functions (set, get, setmatrix and get matrix)
-## 
+# makeCacheMatrix is a function that creates a matrix and caches its inverse.
+# cacheSolve solves for the matrix unless the solved matrix is already stored in the cache,
+# in which case it prints the stored cache.
 
-## Write a short comment describing this function
+# makeCacheMatrix creates a matrix and stores the inverse of that matrix in a cache.
 
 makeCacheMatrix<-function(x = numeric()){
-    m<- NULL
-    set<- function(y){
+    # The function initially sets the cache to NULL.
+    cache<- NULL
+    # Creates a matrix.
+    setmatrix<- function(y){
       x<<-y
-      m<<-NULL
+      # Since the matrix has a new value, the cache is reset to NULL.
+      cache<<-NULL
     }
-    get<-function() x
-    setmatrix<-function(solve) m <<- solve
-    getmatrix<-function() m
-    list(set = set, get = get, 
-         setmatrix = setmatrix, getmatrix = getmatrix)
+    # Returns the matrix stored as x.
+    getmatrix<-function() x
+    # Stores the solved matrix in the cache.
+    setcache<-function(solve) cache <<- solve
+    # Returns the cache.
+    getcache<-function() cache
+    # Returns a list of the functions created in makeCacheMatrix.
+    list(setmatrix = setmatrix, getmatrix = getmatrix, 
+         setcache = setcache, getcache = getcache)
 }
 
-## Write a short comment describing this function
+# cacheSolve produces the inverse of a matrix by either 1) checking to see if 
+# the inverse is stored in the cache or 2) calculating the inverse, storing it
+# in the cache and printing the cache.
 
 cacheSolve <-function(x,...){
-  m<-x$getmatrix()
-  if(!is.null(m)){
+  # Searches for the cache and returns the cache if there
+  # is something stored in the cache.
+  cache<-x$getcache()
+  if(!is.null(cache)){
     message("getting cached data")
-    return(m)
+    return(cache)
   }
-  data<-x$get()
-  m<-solve(data,...)
-  x$setmatrix(m)
-  m
-}
+  # If no cache is found the function retrieves the matrix
+  # and calculates it's inverse, and then stores the inverse in the cache.
+  data<-x$getmatrix()
+  cache<-solve(data,...)
+  x$setmatrix(cache)
+  # Returns the cache.
+  cache
